@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Notes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1 class="nav-title">Gestion des Notes de Cours Etudiants</h1>
+            <div class="nav-buttons" id="authButtons">
+                <button class="btn btn-primary active" data-type="student" onclick="switchUserType('student')">Étudiant</button>
+                <button class="btn btn-secondary" data-type="admin" onclick="switchUserType('admin')">Professeur</button>
+            </div>
+            <div class="nav-user hidden" id="userInfo">
+                <span id="userType"></span>
+                <button class="btn btn-danger" onclick="logout()">Déconnexion</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="mainContent">
+        <!-- Login Form -->
+        <div id="loginSection">
+            <div class="auth-container">
+                <h2 id="loginTitle">Connexion Étudiant</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="matricule">Matricule</label>
+                        <input type="text" id="matricule" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="dashboard hidden">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="register">Ajouter un étudiant</button>
+                <button class="tab-btn" data-tab="grades">Gérer les notes</button>
+                <button class="tab-btn" data-tab="list">Liste des étudiants</button>
+            </div>
+
+            <!-- Student Registration Form -->
+            <div id="registerTab" class="tab-content active">
+                <form id="studentRegisterForm" onsubmit="handleStudentRegistration(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentMatricule">Matricule</label>
+                            <input type="text" id="studentMatricule" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentName">Nom</label>
+                            <input type="text" id="studentName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentFirstName">Prénom</label>
+                            <input type="text" id="studentFirstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentGender">Sexe</label>
+                            <select id="studentGender" required>
+                                <option value="">Sélectionner</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPhoto">Photo</label>
+                        <input type="file" id="studentPhoto" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPassword">Mot de passe</label>
+                        <input type="password" id="studentPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enregistrer l'étudiant</button>
+                </form>
+            </div>
+
+            <!-- Grade Management Form -->
+            <div id="gradesTab" class="tab-content">
+                <form id="gradeForm" onsubmit="handleGradeSubmission(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gradeMatricule">Matricule de l'étudiant</label>
+                            <input type="text" id="gradeMatricule" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="semester">Semestre</label>
+                            <select id="semester" required>
+                                <option value="">Sélectionner</option>
+                                <option value="1">Semestre 1</option>
+                                <option value="2">Semestre 2</option>
+                                <option value="3">Semestre 3</option>
+                                <option value="4">Semestre 4</option>
+                                <option value="5">Semestre 5</option>
+                                <option value="6">Semestre 6</option>
+                                <option value="7">Semestre 7</option>
+                                <option value="8">Semestre 8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Matière</label>
+                        <input type="text" id="subject" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="grade1">Note 1</label>
+                            <input type="number" id="grade1" min="0" max="20" step="0.25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade2">Note 2</label>
+                            <input type="number" id="grade2" min="0" max="20" step="0.25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade3">Note 3</label>
+                            <input type="number" id="grade3" min="0" max="20" step="0.25" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enregistrer les notes</button>
+                </form>
+            </div>
+
+            <!-- Student List -->
+            <div id="listTab" class="tab-content">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom complet</th>
+                            <th>Sexe</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentList">
+                        <!-- Students will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" class="dashboard hidden">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="studentGrades">Mes Notes</button>
+                <button class="tab-btn" data-tab="sharing">Partages</button>
+            </div>
+
+            <!-- Student Grades View -->
+            <div id="studentGradesTab" class="tab-content active">
+                <div class="info-banner">
+                    <span>Vos notes pour le semestre en cours</span>
+                </div>
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Matière</th>
+                            <th>Note 1</th>
+                            <th>Note 2</th>
+                            <th>Note 3</th>
+                            <th>Moyenne</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gradesTableBody">
+                        <!-- Grades will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sharing View -->
+            <div id="sharingTab" class="tab-content">
+                <div class="sharing-container">
+                    <div class="share-form">
+                        <h3>Partager une note</h3>
+                        <textarea id="shareComment" placeholder="Ajouter un commentaire..."></textarea>
+                        <button class="btn btn-primary" onclick="shareGrade()">Partager</button>
+                    </div>
+                    <div id="sharesList" class="shares-list">
+                        <!-- Shares will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/student.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
